@@ -1,5 +1,10 @@
 # JobShield: Machine Learning Fraudulent Job Detection
 
+[![JobShield CI](https://github.com/samyuktaap/fake-job-and-internship-detection--jobsheild/actions/workflows/ci.yml/badge.svg)](https://github.com/samyuktaap/fake-job-and-internship-detection--jobsheild/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-emerald?logo=fastapi)
+![License](https://img.shields.io/badge/License-MIT-blue)
+
 > **An NLP and supervised machine learning system to analyze job advertisements and estimate whether a listing is potentially fraudulent.**
 
 JobShield is built in strict adherence to the **JobShield Group Work Plan & Model Development Guide**, emphasizing strong honest generalization, zero-leakage validation, fraud-class precision and recall balance, and transparent error analysis.
