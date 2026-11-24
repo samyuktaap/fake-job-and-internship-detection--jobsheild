@@ -1,0 +1,226 @@
+{
+  "DummyClassifier (Majority)": {
+    "features": "Baseline only",
+    "type": "baseline",
+    "validation_metrics_default_threshold": {
+      "accuracy": 0.9554,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "true_negatives": 2272,
+      "false_positives": 0,
+      "false_negatives": 106,
+      "true_positives": 0,
+      "confusion_matrix": {
+        "tn": 2272,
+        "fp": 0,
+        "fn": 106,
+        "tp": 0
+      },
+      "pr_auc": 0.0446,
+      "roc_auc": 0.5
+    },
+    "test_metrics": {
+      "accuracy": 0.955,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "true_negatives": 2271,
+      "false_positives": 0,
+      "false_negatives": 107,
+      "true_positives": 0,
+      "confusion_matrix": {
+        "tn": 2271,
+        "fp": 0,
+        "fn": 107,
+        "tp": 0
+      },
+      "pr_auc": 0.045,
+      "roc_auc": 0.5
+    },
+    "test_threshold": 0.5
+  },
+  "Multinomial Naive Bayes": {
+    "features": "TF-IDF text",
+    "type": "nlp_baseline",
+    "validation_metrics_default_threshold": {
+      "accuracy": 0.9794,
+      "precision": 0.8353,
+      "recall": 0.6698,
+      "f1": 0.7435,
+      "true_negatives": 2258,
+      "false_positives": 14,
+      "false_negatives": 35,
+      "true_positives": 71,
+      "confusion_matrix": {
+        "tn": 2258,
+        "fp": 14,
+        "fn": 35,
+        "tp": 71
+      },
+      "pr_auc": 0.8146,
+      "roc_auc": 0.979
+    },
+    "test_metrics": {
+      "accuracy": 0.9807,
+      "precision": 0.8352,
+      "recall": 0.7103,
+      "f1": 0.7677,
+      "true_negatives": 2256,
+      "false_positives": 15,
+      "false_negatives": 31,
+      "true_positives": 76,
+      "confusion_matrix": {
+        "tn": 2256,
+        "fp": 15,
+        "fn": 31,
+        "tp": 76
+      },
+      "pr_auc": 0.8389,
+      "roc_auc": 0.9762
+    },
+    "test_threshold": 0.5
+  },
+  "Logistic Regression (Balanced)": {
+    "features": "TF-IDF + Categorical + Risk signals",
+    "type": "candidate",
+    "validation_metrics_default_threshold": {
+      "accuracy": 0.9554,
+      "precision": 0.5,
+      "recall": 0.9057,
+      "f1": 0.6443,
+      "true_negatives": 2176,
+      "false_positives": 96,
+      "false_negatives": 10,
+      "true_positives": 96,
+      "confusion_matrix": {
+        "tn": 2176,
+        "fp": 96,
+        "fn": 10,
+        "tp": 96
+      },
+      "pr_auc": 0.7959,
+      "roc_auc": 0.988
+    },
+    "test_metrics": {
+      "accuracy": 0.9634,
+      "precision": 0.5588,
+      "recall": 0.8879,
+      "f1": 0.6859,
+      "true_negatives": 2196,
+      "false_positives": 75,
+      "false_negatives": 12,
+      "true_positives": 95,
+      "confusion_matrix": {
+        "tn": 2196,
+        "fp": 75,
+        "fn": 12,
+        "tp": 95
+      },
+      "pr_auc": 0.8348,
+      "roc_auc": 0.9861
+    },
+    "test_threshold": 0.5
+  },
+  "Linear SVM (Calibrated)": {
+    "features": "TF-IDF + Categorical + Risk signals",
+    "type": "candidate",
+    "validation_metrics_default_threshold": {
+      "accuracy": 0.9828,
+      "precision": 0.8652,
+      "recall": 0.7264,
+      "f1": 0.7897,
+      "true_negatives": 2260,
+      "false_positives": 12,
+      "false_negatives": 29,
+      "true_positives": 77,
+      "confusion_matrix": {
+        "tn": 2260,
+        "fp": 12,
+        "fn": 29,
+        "tp": 77
+      },
+      "pr_auc": 0.8705,
+      "roc_auc": 0.991
+    },
+    "optimal_threshold": 0.33,
+    "validation_metrics_tuned_threshold": {
+      "accuracy": 0.9844,
+      "precision": 0.8165,
+      "recall": 0.8396,
+      "f1": 0.8279,
+      "true_negatives": 2252,
+      "false_positives": 20,
+      "false_negatives": 17,
+      "true_positives": 89,
+      "confusion_matrix": {
+        "tn": 2252,
+        "fp": 20,
+        "fn": 17,
+        "tp": 89
+      },
+      "pr_auc": 0.8705,
+      "roc_auc": 0.991
+    },
+    "test_metrics": {
+      "accuracy": 0.9853,
+      "precision": 0.86,
+      "recall": 0.8037,
+      "f1": 0.8309,
+      "true_negatives": 2257,
+      "false_positives": 14,
+      "false_negatives": 21,
+      "true_positives": 86,
+      "confusion_matrix": {
+        "tn": 2257,
+        "fp": 14,
+        "fn": 21,
+        "tp": 86
+      },
+      "pr_auc": 0.9011,
+      "roc_auc": 0.9912
+    },
+    "test_threshold": 0.33
+  },
+  "Random Forest (Balanced)": {
+    "features": "TF-IDF + Categorical + Risk signals",
+    "type": "candidate",
+    "validation_metrics_default_threshold": {
+      "accuracy": 0.9453,
+      "precision": 0.4394,
+      "recall": 0.8208,
+      "f1": 0.5724,
+      "true_negatives": 2161,
+      "false_positives": 111,
+      "false_negatives": 19,
+      "true_positives": 87,
+      "confusion_matrix": {
+        "tn": 2161,
+        "fp": 111,
+        "fn": 19,
+        "tp": 87
+      },
+      "pr_auc": 0.7806,
+      "roc_auc": 0.9783
+    },
+    "test_metrics": {
+      "accuracy": 0.9508,
+      "precision": 0.4713,
+      "recall": 0.7664,
+      "f1": 0.5836,
+      "true_negatives": 2179,
+      "false_positives": 92,
+      "false_negatives": 25,
+      "true_positives": 82,
+      "confusion_matrix": {
+        "tn": 2179,
+        "fp": 92,
+        "fn": 25,
+        "tp": 82
+      },
+      "pr_auc": 0.7582,
+      "roc_auc": 0.9764
+    },
+    "test_threshold": 0.5
+  }
+}

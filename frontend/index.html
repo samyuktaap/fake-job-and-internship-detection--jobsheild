@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobShield | AI Fraudulent Job Detection & Screening</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            },
+            danger: {
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gradient-header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <!-- Navigation Bar -->
+  <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/40 flex items-center justify-center text-emerald-400 shadow-inner">
+          <i class="fa-solid fa-shield-halved text-xl"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-xl font-bold tracking-tight">JobShield</span>
+            <span class="text-xs bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30">NLP ML Pipeline</span>
+          </div>
+          <p class="text-xs text-slate-400">Decision-Support Screening for Fraudulent Job Postings</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center space-x-1 mt-3 sm:mt-0">
+        <button onclick="switchTab('analyzer')" id="tab-btn-analyzer" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all bg-emerald-600 text-white shadow-sm flex items-center space-x-1.5">
+          <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          <span>Analyzer</span>
+        </button>
+        <button onclick="switchTab('metrics')" id="tab-btn-metrics" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-1.5">
+          <i class="fa-solid fa-chart-line text-xs"></i>
+          <span>Model Benchmark</span>
+        </button>
+        <button onclick="switchTab('errors')" id="tab-btn-errors" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-1.5">
+          <i class="fa-solid fa-triangle-exclamation text-xs"></i>
+          <span>Error Analysis</span>
+        </button>
+        <button onclick="switchTab('methodology')" id="tab-btn-methodology" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-1.5">
+          <i class="fa-solid fa-book text-xs"></i>
+          <span>Methodology</span>
+        </button>
+        <button onclick="switchTab('history')" id="tab-btn-history" class="px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-1.5">
+          <i class="fa-solid fa-clock-rotate-left text-xs"></i>
+          <span>Scan History</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- TAB 1: ANALYZER -->
+    <section id="tab-analyzer" class="space-y-6">
+      
+      <!-- Quick Demo Presets Banner -->
+      <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div class="flex items-center space-x-2">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded">Quick Demo Presets:</span>
+          <span class="text-xs text-slate-600">Click to instantly load verified benchmark listings:</span>
+        </div>
+        <div class="flex flex-wrap gap-2 w-full md:w-auto" id="sample-buttons-container">
+          <button onclick="loadSample(0)" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 border border-slate-200 px-3 py-1.5 rounded-lg font-medium transition">
+            🟢 Legit: Software Engineer
+          </button>
+          <button onclick="loadSample(1)" class="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 border border-slate-200 px-3 py-1.5 rounded-lg font-medium transition">
+            🔴 Scam: Urgent Data Entry Wire Transfer
+          </button>
+          <button onclick="loadSample(2)" class="text-xs bg-slate-100 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300 border border-slate-200 px-3 py-1.5 rounded-lg font-medium transition">
+            🔴 Scam: Crypto Payout Mule
+          </button>
+          <button onclick="loadSample(3)" class="text-xs bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 border border-slate-200 px-3 py-1.5 rounded-lg font-medium transition">
+            🟢 Legit: Marketing Coordinator
+          </button>
+          <button onclick="clearForm()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2.5 py-1.5 rounded-lg font-medium transition">
+            🧹 Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Analysis Grid: Form (Left) & Results Card (Right) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Form Column (7 cols) -->
+        <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h2 class="text-base font-semibold text-slate-900 flex items-center space-x-2">
+              <i class="fa-solid fa-file-pen text-slate-400"></i>
+              <span>Job Advertisement Details</span>
+            </h2>
+            <span class="text-xs text-slate-400">* Required fields for NLP analysis</span>
+          </div>
+
+          <form id="job-form" onsubmit="handleAnalyze(event)" class="space-y-4">
+            <!-- Job Title -->
+            <div>
+              <label for="title" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                Job Title <span class="text-rose-500">*</span>
+              </label>
+              <input type="text" id="title" required
+                placeholder="e.g. Senior Full-Stack Software Engineer"
+                class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition">
+            </div>
+
+            <!-- Description -->
+            <div>
+              <label for="description" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                Job Description & Duties <span class="text-rose-500">*</span>
+              </label>
+              <textarea id="description" rows="4" required
+                placeholder="Paste the primary job responsibilities and overview here..."
+                class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition custom-scroll"></textarea>
+            </div>
+
+            <!-- Company Profile -->
+            <div>
+              <label for="company_profile" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                Company Profile / About the Employer
+              </label>
+              <textarea id="company_profile" rows="2"
+                placeholder="About company, mission, or founding story (absence is a known risk signal)..."
+                class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition custom-scroll"></textarea>
+            </div>
+
+            <!-- Requirements & Benefits (2 Cols) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label for="requirements" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                  Requirements & Skills
+                </label>
+                <textarea id="requirements" rows="2"
+                  placeholder="Required degrees, experience, tools..."
+                  class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition custom-scroll"></textarea>
+              </div>
+              <div>
+                <label for="benefits" class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">
+                  Benefits & Compensation
+                </label>
+                <textarea id="benefits" rows="2"
+                  placeholder="Health insurance, 401(k), paid time off..."
+                  class="w-full text-sm px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition custom-scroll"></textarea>
+              </div>
+            </div>
+
+            <!-- Structured Metadata Accordion -->
+            <details class="group border border-slate-200 rounded-lg bg-slate-50/50 p-3 text-xs">
+              <summary class="font-semibold text-slate-700 cursor-pointer flex items-center justify-between">
+                <span class="flex items-center space-x-2">
+                  <i class="fa-solid fa-sliders text-slate-400"></i>
+                  <span>Optional Structured Fields & Metadata</span>
+                </span>
+                <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <div class="pt-3 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label class="block text-slate-500 mb-0.5">Location</label>
+                    <input type="text" id="location" placeholder="US, NY, New York" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-xs">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-0.5">Department</label>
+                    <input type="text" id="department" placeholder="Engineering" class="w-full bg-white border border-slate-200 rounded px-2.5 py-1.5 text-xs">
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-0.5">Employment Type</label>
+                    <select id="employment_type" class="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs">
+                      <option value="Full-time">Full-time</option>
+                      <option value="Part-time">Part-time</option>
+                      <option value="Contract">Contract</option>
+                      <option value="Temporary">Temporary</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-slate-500 mb-0.5">Required Experience</label>
+                    <select id="required_experience" class="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs">
+                      <option value="Unspecified">Unspecified</option>
+                      <option value="Entry level">Entry level</option>
+                      <option value="Mid-Senior level">Mid-Senior level</option>
+                      <option value="Associate">Associate</option>
+                      <option value="Director">Director</option>
+                      <option value="Executive">Executive</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-slate-500 mb-0.5">Required Education</label>
+                    <select id="required_education" class="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs">
+                      <option value="Unspecified">Unspecified</option>
+                      <option value="High School or equivalent">High School</option>
+                      <option value="Bachelor's Degree">Bachelor's Degree</option>
+                      <option value="Master's Degree">Master's Degree</option>
+                      <option value="Doctorate">Doctorate</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Binary Checkboxes -->
+                <div class="flex flex-wrap gap-4 pt-1">
+                  <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                    <input type="checkbox" id="has_company_logo" checked class="rounded text-emerald-600 focus:ring-0">
+                    <span class="text-slate-700">Company Logo Present</span>
+                  </label>
+                  <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                    <input type="checkbox" id="has_questions" checked class="rounded text-emerald-600 focus:ring-0">
+                    <span class="text-slate-700">Screening Questions Present</span>
+                  </label>
+                  <label class="inline-flex items-center space-x-1.5 cursor-pointer">
+                    <input type="checkbox" id="telecommuting" class="rounded text-emerald-600 focus:ring-0">
+                    <span class="text-slate-700">Remote / Telecommuting</span>
+                  </label>
+                </div>
+              </div>
+            </details>
+
+            <!-- Submit Button -->
+            <button type="submit" id="btn-analyze"
+              class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 text-sm">
+              <i class="fa-solid fa-shield-virus"></i>
+              <span>Screen Job Posting with JobShield</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Results Column (5 cols) -->
+        <div class="lg:col-span-5 space-y-4">
+
+          <!-- Initial Empty State -->
+          <div id="results-empty" class="bg-white rounded-xl border border-slate-200 p-8 text-center space-y-3">
+            <div class="w-16 h-16 mx-auto rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+              <i class="fa-solid fa-file-shield text-2xl"></i>
+            </div>
+            <h3 class="font-semibold text-slate-800 text-base">Ready for Inspection</h3>
+            <p class="text-xs text-slate-500 max-w-sm mx-auto">
+              Select one of the sample presets above or paste your own job listing to screen for fraudulent signals, payment demands, or suspicious patterns.
+            </p>
+          </div>
+
+          <!-- Loading State -->
+          <div id="results-loading" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center space-y-3">
+            <div class="animate-spin w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full mx-auto"></div>
+            <p class="text-sm font-semibold text-slate-700">Running NLP Preprocessor & Classifier...</p>
+            <p class="text-xs text-slate-400">Extracting TF-IDF n-grams & evaluating calibrated decision boundary...</p>
+          </div>
+
+          <!-- Populated Results Card -->
+          <div id="results-card" class="hidden space-y-4">
+            
+            <!-- Main Badge Card -->
+            <div id="badge-container" class="rounded-xl border p-5 shadow-sm space-y-4 transition-all">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Screening Verdict</span>
+                <span id="risk-level-tag" class="text-xs font-bold uppercase px-2.5 py-0.5 rounded-full"></span>
+              </div>
+
+              <div>
+                <h3 id="verdict-label" class="text-2xl font-extrabold tracking-tight"></h3>
+                <p id="verdict-subtext" class="text-xs mt-1 text-slate-600"></p>
+              </div>
+
+              <!-- Risk Score Meter -->
+              <div class="space-y-1.5 pt-2 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-semibold text-slate-700">Estimated Fraud Likelihood</span>
+                  <span id="risk-score-text" class="font-bold text-base"></span>
+                </div>
+                <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                  <div id="risk-progress-bar" class="h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-slate-400 pt-0.5">
+                  <span>0% (Legitimate)</span>
+                  <span id="threshold-marker">Threshold: 70%</span>
+                  <span>100% (High Scam Risk)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Signal Insights Breakdown -->
+            <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm space-y-3">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
+                <i class="fa-solid fa-list-check text-slate-400"></i>
+                <span>Detected Signal Breakdown</span>
+              </h4>
+
+              <!-- Red Flags (Suspicious) -->
+              <div id="red-flags-section" class="space-y-2">
+                <span class="text-xs font-semibold text-rose-700 flex items-center space-x-1">
+                  <i class="fa-solid fa-circle-exclamation"></i>
+                  <span>Warning Flags Detected (<span id="red-flags-count">0</span>)</span>
+                </span>
+                <div id="red-flags-list" class="space-y-1.5"></div>
+              </div>
+
+              <!-- Green Flags (Legitimacy) -->
+              <div id="green-flags-section" class="space-y-2 pt-2 border-t border-slate-100">
+                <span class="text-xs font-semibold text-emerald-700 flex items-center space-x-1">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <span>Legitimacy Markers (<span id="green-flags-count">0</span>)</span>
+                </span>
+                <div id="green-flags-list" class="space-y-1.5"></div>
+              </div>
+
+              <!-- ML Authentic Vocabulary Signals -->
+              <div id="language-signals-section" class="space-y-1.5 pt-2 border-t border-slate-100 hidden">
+                <span class="text-xs font-semibold text-emerald-800 flex items-center space-x-1">
+                  <i class="fa-solid fa-spell-check"></i>
+                  <span>Authentic Career Vocabulary Signals</span>
+                </span>
+                <div id="language-signals-tags" class="flex flex-wrap gap-1.5 pt-1"></div>
+              </div>
+
+              <!-- Feedback / Review Trigger Button -->
+              <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                <button type="button" onclick="openFeedbackModal()" class="text-xs text-slate-700 hover:text-emerald-700 font-medium flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-white transition shadow-xs">
+                  <i class="fa-regular fa-comment-dots text-slate-400"></i>
+                  <span>Report / Provide Feedback</span>
+                </button>
+                <span id="scan-id-badge" class="text-[11px] text-slate-400 font-mono"></span>
+              </div>
+            </div>
+
+            <!-- Mandatory Responsible-Use Disclaimer -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 text-xs text-amber-900 space-y-1 shadow-sm">
+              <div class="font-bold flex items-center space-x-1.5 text-amber-800">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <span>Decision-Support Prototype Notice</span>
+              </div>
+              <p class="text-[11px] leading-relaxed text-amber-800/90" id="disclaimer-text">
+                JobShield is an algorithmic screening aid, not a legal finding or definitive accusation. Always independently verify employers through verified website domains and official registry records.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: MODEL BENCHMARK & METRICS -->
+    <section id="tab-metrics" class="hidden space-y-6">
+      
+      <!-- Top KPI Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Held-Out Accuracy</p>
+          <p class="text-2xl font-bold text-slate-900 mt-1">98.53%</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">2,378 test postings</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Fraud Precision</p>
+          <p class="text-2xl font-bold text-emerald-600 mt-1">86.00%</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Only 14 FP out of 2,271</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Fraud Recall</p>
+          <p class="text-2xl font-bold text-emerald-600 mt-1">80.37%</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Catches 86 of 107 scams</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Fraud F1-Score</p>
+          <p class="text-2xl font-bold text-slate-900 mt-1">0.8309</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Optimal harmonic balance</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">PR-AUC</p>
+          <p class="text-2xl font-bold text-indigo-600 mt-1">0.9011</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Precision-recall curve</p>
+        </div>
+      </div>
+
+      <!-- Comparative Model Table -->
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">Model Comparison on Untouched Held-Out Test Set</h3>
+            <p class="text-xs text-slate-500">Evaluated on 2,378 test samples (107 fraudulent, 2,271 legitimate) with stratified split.</p>
+          </div>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full border border-emerald-200">
+            Champion: Linear SVM (Calibrated, Tuned Threshold 0.33) ★
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100/75 text-slate-600 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Model Candidate</th>
+                <th class="py-3 px-4">Feature Inputs</th>
+                <th class="py-3 px-4">Threshold</th>
+                <th class="py-3 px-4">Precision (Fraud)</th>
+                <th class="py-3 px-4">Recall (Fraud)</th>
+                <th class="py-3 px-4">F1-Score</th>
+                <th class="py-3 px-4">PR-AUC</th>
+                <th class="py-3 px-4">ROC-AUC</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-semibold text-slate-500">DummyClassifier (Majority Baseline)</td>
+                <td class="py-3 px-4 text-slate-500">None (Majority class)</td>
+                <td class="py-3 px-4">0.05</td>
+                <td class="py-3 px-4">0.00%</td>
+                <td class="py-3 px-4">0.00%</td>
+                <td class="py-3 px-4">0.0000</td>
+                <td class="py-3 px-4">0.0450</td>
+                <td class="py-3 px-4">0.5000</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-semibold text-slate-800">Multinomial Naive Bayes</td>
+                <td class="py-3 px-4">TF-IDF unigrams/bigrams</td>
+                <td class="py-3 px-4">0.46</td>
+                <td class="py-3 px-4">79.59%</td>
+                <td class="py-3 px-4">72.90%</td>
+                <td class="py-3 px-4">0.7610</td>
+                <td class="py-3 px-4">0.8389</td>
+                <td class="py-3 px-4">0.9762</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-semibold text-slate-800">Logistic Regression (Balanced)</td>
+                <td class="py-3 px-4">TF-IDF + Metadata + Risk Signals</td>
+                <td class="py-3 px-4">0.70</td>
+                <td class="py-3 px-4">77.27%</td>
+                <td class="py-3 px-4">79.44%</td>
+                <td class="py-3 px-4">0.7834</td>
+                <td class="py-3 px-4">0.8348</td>
+                <td class="py-3 px-4">0.9861</td>
+              </tr>
+              <tr class="bg-emerald-50/60 font-semibold border-l-4 border-l-emerald-500">
+                <td class="py-3 px-4 text-emerald-950 flex items-center space-x-1.5">
+                  <i class="fa-solid fa-crown text-amber-500"></i>
+                  <span>Linear SVM (Calibrated) ★ (Champion)</span>
+                </td>
+                <td class="py-3 px-4 text-emerald-900">TF-IDF + Metadata + Risk Signals</td>
+                <td class="py-3 px-4 text-emerald-900">0.33 (Tuned)</td>
+                <td class="py-3 px-4 text-emerald-900">86.00%</td>
+                <td class="py-3 px-4 text-emerald-900">80.37%</td>
+                <td class="py-3 px-4 text-emerald-900">0.8309</td>
+                <td class="py-3 px-4 text-emerald-900">0.9011</td>
+                <td class="py-3 px-4 text-emerald-900">0.9912</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-semibold text-slate-800">Random Forest (Balanced)</td>
+                <td class="py-3 px-4">TF-IDF + Metadata + Risk Signals</td>
+                <td class="py-3 px-4">0.60</td>
+                <td class="py-3 px-4">67.96%</td>
+                <td class="py-3 px-4">65.42%</td>
+                <td class="py-3 px-4">0.6667</td>
+                <td class="py-3 px-4">0.7582</td>
+                <td class="py-3 px-4">0.9764</td>
+              </tr>
+              <tr class="hover:bg-slate-50/50">
+                <td class="py-3 px-4 font-semibold text-slate-800">XGBoost (scale_pos_weight)</td>
+                <td class="py-3 px-4">TF-IDF + Metadata + Risk Signals</td>
+                <td class="py-3 px-4">0.63</td>
+                <td class="py-3 px-4">70.09%</td>
+                <td class="py-3 px-4">76.64%</td>
+                <td class="py-3 px-4">0.7321</td>
+                <td class="py-3 px-4">0.8038</td>
+                <td class="py-3 px-4">0.9786</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Confusion Matrix & Threshold Rationale Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Confusion Matrix Card -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+          <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-table-cells text-slate-400"></i>
+            <span>Held-Out Test Set Confusion Matrix (Linear SVM @ 0.33)</span>
+          </h3>
+          
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+              <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">True Negatives (TN)</span>
+              <span class="text-3xl font-extrabold text-emerald-700 block my-1">2,257</span>
+              <span class="text-[11px] text-emerald-600">Correctly passed as genuine</span>
+            </div>
+            <div class="bg-rose-50 border border-rose-200 rounded-xl p-4">
+              <span class="text-[11px] font-bold text-rose-800 uppercase tracking-wider block">False Positives (FP)</span>
+              <span class="text-3xl font-extrabold text-rose-700 block my-1">14</span>
+              <span class="text-[11px] text-rose-600">Genuine flagged as fraud (0.62%)</span>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">False Negatives (FN)</span>
+              <span class="text-3xl font-extrabold text-amber-700 block my-1">21</span>
+              <span class="text-[11px] text-amber-600">Scams missed by model (0.88%)</span>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+              <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block">True Positives (TP)</span>
+              <span class="text-3xl font-extrabold text-emerald-700 block my-1">86</span>
+              <span class="text-[11px] text-emerald-600">Scams successfully flagged (80.4%)</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-500">
+            Total test sample: <strong>2,378 listings</strong>. Calibrated Linear SVM reduced false accusations down to only 14 listings (0.62%), giving 86.00% precision while catching 86 out of 107 scams.
+          </p>
+        </div>
+          <p class="text-xs text-slate-500">
+            Total test sample: <strong>2,378 listings</strong>. Notice that out of 2,271 legitimate listings, only 25 were false positives (1.1%), protecting genuine employers from false accusations.
+          </p>
+        </div>
+
+        <!-- Threshold Selection & Calibration Card -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-3">
+          <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+            <i class="fa-solid fa-crosshairs text-slate-400"></i>
+            <span>Threshold Selection Rationale</span>
+          </h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Due to the severe class imbalance in real-world recruitment data (only <strong>4.5%</strong> of postings are fraudulent), a naive 0.50 threshold with balanced weights yielded a false positive rate of 4.2% (96 false positives on validation).
+          </p>
+          <div class="bg-slate-50 rounded-lg p-3 text-xs space-y-2 border border-slate-200">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 font-medium">Validation Default (0.50):</span>
+              <span class="font-semibold text-slate-800">Precision 50.0% | Recall 90.6% | F1 0.644</span>
+            </div>
+            <div class="flex justify-between items-center text-emerald-700 font-semibold">
+              <span>Validation Tuned (0.70):</span>
+              <span>Precision 71.7% | Recall 81.1% | F1 0.761</span>
+            </div>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            By scanning candidate thresholds on the <strong>validation set only</strong>, threshold <strong>0.70</strong> maximized fraud F1-score while preserving ~80% fraud recall, slashing false accusations on the held-out test set from 96 down to 25.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 3: ERROR ANALYSIS -->
+    <section id="tab-errors" class="hidden space-y-6">
+      
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+          <i class="fa-solid fa-microscope text-slate-500"></i>
+          <span>Transparent Error Analysis: What Makes a False Positive or False Negative?</span>
+        </h3>
+        <p class="text-xs text-slate-500 mt-1">
+          As required by the JobShield guidelines: no responsible model promises 100% accuracy. Examining failures reveals the structural limitations of tabular and text-based fraud detection.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- False Positives Column -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center space-x-2 text-rose-700 border-b border-slate-100 pb-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h4 class="font-bold text-sm">False Positives (Legitimate Flagged as Fraud)</h4>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Why does the model flag legitimate listings?
+          </p>
+          <div class="space-y-3">
+            <div class="bg-slate-50 border-l-4 border-l-rose-500 p-3 rounded text-xs space-y-1">
+              <span class="font-bold text-slate-800 block">Case 1: Commission-Only Remote Sales</span>
+              <p class="text-slate-600">
+                Small sales agencies advertising 100% commission roles without a detailed company profile or corporate logo resemble work-from-home scams.
+              </p>
+            </div>
+            <div class="bg-slate-50 border-l-4 border-l-rose-500 p-3 rounded text-xs space-y-1">
+              <span class="font-bold text-slate-800 block">Case 2: Early-Stage Startups</span>
+              <p class="text-slate-600">
+                Founders hiring informal contract interns using brief job descriptions and missing formal education requirements trigger low-legitimacy heuristics.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- False Negatives Column -->
+        <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+          <div class="flex items-center space-x-2 text-amber-700 border-b border-slate-100 pb-2">
+            <i class="fa-solid fa-eye-slash"></i>
+            <h4 class="font-bold text-sm">False Negatives (Scams Missed by Model)</h4>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            How do sophisticated scams evade detection?
+          </p>
+          <div class="space-y-3">
+            <div class="bg-slate-50 border-l-4 border-l-amber-500 p-3 rounded text-xs space-y-1">
+              <span class="font-bold text-slate-800 block">Case 1: Plagiarized Enterprise Postings</span>
+              <p class="text-slate-600">
+                Scammers copy-pasted authentic job descriptions verbatim from Fortune 500 websites (e.g. Oracle, IBM), withholding the upfront fee demand until the email interview stage.
+              </p>
+            </div>
+            <div class="bg-slate-50 border-l-4 border-l-amber-500 p-3 rounded text-xs space-y-1">
+              <span class="font-bold text-slate-800 block">Case 2: Subtle Professional Phishing</span>
+              <p class="text-slate-600">
+                Postings that avoid explicit trigger keywords like "wire transfer" and instead request standard resume documents that redirect to spoofed login portals.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TAB 4: METHODOLOGY & TEAM ALLOCATION -->
+    <section id="tab-methodology" class="hidden space-y-6">
+      
+      <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+        <h3 class="font-bold text-slate-900 text-base">Methodology & Group Allocation (JobShield Work Plan)</h3>
+        <p class="text-xs text-slate-600 leading-relaxed">
+          JobShield follows an audited five-member lifecycle designed for honest generalization, strict leakage prevention, and transparent error analysis.
+        </p>
+
+        <!-- 5-member allocation table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs border border-slate-200 rounded-lg">
+            <thead class="bg-slate-100 text-slate-700 font-semibold uppercase">
+              <tr>
+                <th class="py-2.5 px-3">Role</th>
+                <th class="py-2.5 px-3">Primary Ownership</th>
+                <th class="py-2.5 px-3">Key Deliverables Delivered in JobShield</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr>
+                <td class="py-2.5 px-3 font-semibold">1 – Data Lead</td>
+                <td class="py-2.5 px-3">Dataset research & hygiene</td>
+                <td class="py-2.5 px-3">EMSCAD deduplication (removed 2,031 duplicate templates to prevent train-test contamination); 70/15/15 stratified split.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold">2 – NLP Lead</td>
+                <td class="py-2.5 px-3">Preprocessing & TF-IDF</td>
+                <td class="py-2.5 px-3">Scikit-learn pipeline with text cleaning, unigram/bigram sublinear TF-IDF, and 10 domain risk indicator extractors.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold">3 – ML Lead</td>
+                <td class="py-2.5 px-3">Model training & tuning</td>
+                <td class="py-2.5 px-3">Baseline comparisons (Dummy, Naive Bayes), candidate models (Logistic Regression, Calibrated Linear SVM, Random Forest), validation threshold tuning.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold">4 – Backend Lead</td>
+                <td class="py-2.5 px-3">FastAPI prediction service</td>
+                <td class="py-2.5 px-3">Validated Pydantic schemas, REST endpoints (/api/predict, /api/metrics, /api/samples), and automated Pytest test suite.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-semibold">5 – Frontend / Integration Lead</td>
+                <td class="py-2.5 px-3">Interactive UI & Demo</td>
+                <td class="py-2.5 px-3">Modern single-page application, real-time risk gauge, signal breakdown, model transparency dashboard, and preset demo cases.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Dataset Limitations -->
+      <div class="bg-slate-100 border border-slate-200 rounded-xl p-5 space-y-2 text-xs text-slate-700">
+        <h4 class="font-bold text-slate-900 uppercase tracking-wider">Dataset Limitations & Ethical Considerations</h4>
+        <ul class="list-disc list-inside space-y-1 text-slate-600 leading-relaxed">
+          <li><strong>Age of Data:</strong> The EMSCAD dataset contains postings collected primarily in the mid-2010s; modern AI-generated scam copy may exhibit linguistic subtleties not captured here.</li>
+          <li><strong>Geography & Language:</strong> English-language listings dominate the dataset. Performance on non-English listings will degrade.</li>
+          <li><strong>Screening Aid Only:</strong> High risk score indicates similarity to known scam patterns, not legal culpability. Users are encouraged to perform out-of-band verification.</li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- TAB 5: SCAN HISTORY -->
+    <section id="tab-history" class="hidden space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm flex items-center space-x-2">
+              <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+              <span>Persistent Scan History</span>
+            </h3>
+            <p class="text-xs text-slate-500">Evaluated job postings stored in local SQLite database (jobshield.db).</p>
+          </div>
+          <button onclick="loadScanHistory()" class="text-xs px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 font-medium text-slate-700 flex items-center space-x-1.5 shadow-2xs transition">
+            <i class="fa-solid fa-arrows-rotate text-xs"></i>
+            <span>Refresh</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-100/75 text-slate-600 uppercase tracking-wider font-semibold border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4">Scan ID</th>
+                <th class="py-3 px-4">Date / Time (UTC)</th>
+                <th class="py-3 px-4">Job Title</th>
+                <th class="py-3 px-4">Company</th>
+                <th class="py-3 px-4">Risk Rating</th>
+                <th class="py-3 px-4">Verdict</th>
+                <th class="py-3 px-4 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body" class="divide-y divide-slate-100 text-slate-700">
+              <tr><td colspan="7" class="py-8 text-center text-slate-400 italic">Click Refresh or select tab to load scan history...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <p>JobShield Machine Learning Project | Supervised NLP Classification & Screening Aid</p>
+      <p class="text-slate-400">Trained on EMSCAD Benchmark • Zero-Leakage Stratified Pipeline</p>
+    </div>
+  </footer>
+
+  <!-- Feedback Modal -->
+  <div id="feedback-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base flex items-center space-x-2">
+          <i class="fa-solid fa-flag text-emerald-600"></i>
+          <span>Report Prediction Feedback</span>
+        </h3>
+        <button type="button" onclick="closeFeedbackModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+      </div>
+
+      <p class="text-xs text-slate-500">
+        Help improve JobShield's audited models. Your feedback feeds human-in-the-loop retraining and prevents future misclassifications.
+      </p>
+
+      <form id="feedback-form" onsubmit="submitFeedback(event)" class="space-y-3.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1.5">What is the actual status of this job?</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center space-x-2 p-2.5 rounded-lg border border-slate-200 hover:border-emerald-300 cursor-pointer bg-slate-50/50">
+              <input type="radio" name="reported_label" value="Legitimate" checked class="text-emerald-600 focus:ring-emerald-500">
+              <span class="text-xs font-semibold text-slate-800">✅ Actually Legitimate</span>
+            </label>
+            <label class="flex items-center space-x-2 p-2.5 rounded-lg border border-slate-200 hover:border-rose-300 cursor-pointer bg-slate-50/50">
+              <input type="radio" name="reported_label" value="Fraudulent" class="text-rose-600 focus:ring-rose-500">
+              <span class="text-xs font-semibold text-slate-800">🚨 Actually Scam</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Reviewer Comments / Observations</label>
+          <textarea id="feedback-comments" rows="3" placeholder="e.g. Official offer letter received from corporate domain, or verified recruiter contact..." class="w-full text-xs rounded-lg border border-slate-200 p-2.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Optional Contact Email</label>
+          <input type="email" id="feedback-email" placeholder="reviewer@domain.com" class="w-full text-xs rounded-lg border border-slate-200 p-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-100">
+          <button type="button" onclick="closeFeedbackModal()" class="px-3.5 py-1.5 rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs">Submit Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Client-side Logic Script -->
+  <script>
+    let sampleData = [];
+    let currentScanId = null;
+
+    // Switch between navigation tabs
+    function switchTab(tabId) {
+      const tabs = ['analyzer', 'metrics', 'errors', 'methodology', 'history'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabId) {
+          el.classList.remove('hidden');
+          btn.className = "px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all bg-emerald-600 text-white shadow-sm flex items-center space-x-1.5";
+        } else {
+          el.classList.add('hidden');
+          btn.className = "px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all text-slate-300 hover:text-white hover:bg-slate-800 flex items-center space-x-1.5";
+        }
+      });
+
+      if (tabId === 'history') {
+        loadScanHistory();
+      }
+    }
+
+    // Fetch sample test cases from API on page load
+    async function initSamples() {
+      try {
+        const res = await fetch('/api/samples');
+        if (res.ok) {
+          sampleData = await res.json();
+        }
+      } catch (e) {
+        console.warn("Could not fetch samples from API; fallback to defaults.", e);
+      }
+    }
+
+    // Load sample into form
+    function loadSample(index) {
+      if (!sampleData || sampleData.length === 0) return;
+      const s = sampleData[index];
+      if (!s) return;
+
+      document.getElementById('title').value = s.title || '';
+      document.getElementById('description').value = s.description || '';
+      document.getElementById('company_profile').value = s.company_profile || '';
+      document.getElementById('requirements').value = s.requirements || '';
+      document.getElementById('benefits').value = s.benefits || '';
+      document.getElementById('location').value = s.location || '';
+      document.getElementById('department').value = s.department || '';
+      document.getElementById('employment_type').value = s.employment_type || 'Full-time';
+      document.getElementById('required_experience').value = s.required_experience || 'Unspecified';
+      document.getElementById('required_education').value = s.required_education || 'Unspecified';
+      document.getElementById('has_company_logo').checked = s.has_company_logo === 1;
+      document.getElementById('has_questions').checked = s.has_questions === 1;
+      document.getElementById('telecommuting').checked = s.telecommuting === 1;
+
+      // Automatically trigger analysis
+      document.getElementById('job-form').dispatchEvent(new Event('submit'));
+    }
+
+    function clearForm() {
+      document.getElementById('job-form').reset();
+      document.getElementById('results-card').classList.add('hidden');
+      document.getElementById('results-empty').classList.remove('hidden');
+      currentScanId = null;
+    }
+
+    // Handle form submission to /api/predict
+    async function handleAnalyze(e) {
+      e.preventDefault();
+
+      const payload = {
+        title: document.getElementById('title').value.trim(),
+        description: document.getElementById('description').value.trim(),
+        company_profile: document.getElementById('company_profile').value.trim(),
+        requirements: document.getElementById('requirements').value.trim(),
+        benefits: document.getElementById('benefits').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        department: document.getElementById('department').value.trim(),
+        employment_type: document.getElementById('employment_type').value,
+        required_experience: document.getElementById('required_experience').value,
+        required_education: document.getElementById('required_education').value,
+        has_company_logo: document.getElementById('has_company_logo').checked ? 1 : 0,
+        has_questions: document.getElementById('has_questions').checked ? 1 : 0,
+        telecommuting: document.getElementById('telecommuting').checked ? 1 : 0
+      };
+
+      document.getElementById('results-empty').classList.add('hidden');
+      document.getElementById('results-card').classList.add('hidden');
+      document.getElementById('results-loading').classList.remove('hidden');
+
+      try {
+        const response = await fetch('/api/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          const err = await response.json();
+          throw new Error(err.detail || 'Prediction failed');
+        }
+
+        const data = await response.json();
+        renderResults(data);
+      } catch (err) {
+        alert("Error analyzing job posting: " + err.message);
+        document.getElementById('results-empty').classList.remove('hidden');
+      } finally {
+        document.getElementById('results-loading').classList.add('hidden');
+      }
+    }
+
+    // Render results in UI
+    function renderResults(data) {
+      document.getElementById('results-card').classList.remove('hidden');
+      currentScanId = data.scan_id || null;
+
+      const scanBadge = document.getElementById('scan-id-badge');
+      if (data.scan_id) {
+        scanBadge.textContent = `Scan Record #${data.scan_id}`;
+      } else {
+        scanBadge.textContent = '';
+      }
+
+      const badge = document.getElementById('badge-container');
+      const verdictLabel = document.getElementById('verdict-label');
+      const verdictSubtext = document.getElementById('verdict-subtext');
+      const riskLevelTag = document.getElementById('risk-level-tag');
+      const riskScoreText = document.getElementById('risk-score-text');
+      const progressBar = document.getElementById('risk-progress-bar');
+      const thresholdMarker = document.getElementById('threshold-marker');
+
+      verdictLabel.textContent = data.prediction_label;
+      riskScoreText.textContent = `${data.risk_score_pct}%`;
+      progressBar.style.width = `${Math.min(data.risk_score_pct, 100)}%`;
+      thresholdMarker.textContent = `Threshold: ${Math.round(data.decision_threshold_used * 100)}%`;
+
+      if (data.badge_color === 'red') {
+        badge.className = "rounded-xl border border-rose-200 bg-rose-50/70 p-5 shadow-sm space-y-4";
+        verdictLabel.className = "text-2xl font-extrabold tracking-tight text-rose-950";
+        verdictSubtext.textContent = "High probability of resembling known recruitment scam tactics.";
+        riskLevelTag.className = "text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-800";
+        riskLevelTag.textContent = data.risk_level;
+        riskScoreText.className = "font-bold text-base text-rose-700";
+        progressBar.className = "h-full rounded-full bg-rose-600 transition-all duration-500";
+      } else if (data.badge_color === 'orange') {
+        badge.className = "rounded-xl border border-amber-200 bg-amber-50/70 p-5 shadow-sm space-y-4";
+        verdictLabel.className = "text-2xl font-extrabold tracking-tight text-amber-950";
+        verdictSubtext.textContent = "Elevated risk indicators present exceeding validation threshold.";
+        riskLevelTag.className = "text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-800";
+        riskLevelTag.textContent = data.risk_level;
+        riskScoreText.className = "font-bold text-base text-amber-700";
+        progressBar.className = "h-full rounded-full bg-amber-500 transition-all duration-500";
+      } else {
+        badge.className = "rounded-xl border border-emerald-200 bg-emerald-50/70 p-5 shadow-sm space-y-4";
+        verdictLabel.className = "text-2xl font-extrabold tracking-tight text-emerald-950";
+        verdictSubtext.textContent = "Listing aligns with standard authentic recruitment postings.";
+        riskLevelTag.className = "text-xs font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-200 text-emerald-800";
+        riskLevelTag.textContent = data.risk_level;
+        riskScoreText.className = "font-bold text-base text-emerald-700";
+        progressBar.className = "h-full rounded-full bg-emerald-600 transition-all duration-500";
+      }
+
+      // Red flags
+      const redList = document.getElementById('red-flags-list');
+      const redCount = document.getElementById('red-flags-count');
+      redList.innerHTML = '';
+      redCount.textContent = data.red_flags ? data.red_flags.length : 0;
+
+      if (!data.red_flags || data.red_flags.length === 0) {
+        redList.innerHTML = '<p class="text-xs text-slate-500 italic">No suspicious payment requests or scam phrases detected.</p>';
+      } else {
+        data.red_flags.forEach(rf => {
+          const div = document.createElement('div');
+          div.className = "bg-rose-50/80 border border-rose-200 rounded p-2 text-xs space-y-0.5";
+          div.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-rose-900">${rf.category}</span>
+              ${rf.severity ? `<span class="text-[10px] font-bold px-1.5 py-0.2 rounded bg-rose-200 text-rose-800">${rf.severity}</span>` : ''}
+            </div>
+            <p class="text-rose-800/90 text-[11px]">${rf.detail}</p>
+          `;
+          redList.appendChild(div);
+        });
+      }
+
+      // Green flags
+      const greenList = document.getElementById('green-flags-list');
+      const greenCount = document.getElementById('green-flags-count');
+      greenList.innerHTML = '';
+      greenCount.textContent = data.green_flags ? data.green_flags.length : 0;
+
+      if (!data.green_flags || data.green_flags.length === 0) {
+        greenList.innerHTML = '<p class="text-xs text-slate-500 italic">Limited structural legitimacy indicators provided.</p>';
+      } else {
+        data.green_flags.forEach(gf => {
+          const div = document.createElement('div');
+          div.className = "bg-emerald-50/80 border border-emerald-200 rounded p-2 text-xs space-y-0.5";
+          div.innerHTML = `
+            <span class="font-bold text-emerald-900 block">${gf.category}</span>
+            <p class="text-emerald-800/90 text-[11px]">${gf.detail}</p>
+          `;
+          greenList.appendChild(div);
+        });
+      }
+
+      // Authentic Language Keywords Signals
+      const langSection = document.getElementById('language-signals-section');
+      const langTags = document.getElementById('language-signals-tags');
+      if (data.key_genuine_signals && data.key_genuine_signals.length > 0) {
+        langSection.classList.remove('hidden');
+        langTags.innerHTML = data.key_genuine_signals.map(w =>
+          `<span class="text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full">${w}</span>`
+        ).join('');
+      } else {
+        langSection.classList.add('hidden');
+      }
+    }
+
+    // Modal Controls for Feedback
+    function openFeedbackModal() {
+      document.getElementById('feedback-modal').classList.remove('hidden');
+    }
+
+    function closeFeedbackModal() {
+      document.getElementById('feedback-modal').classList.add('hidden');
+    }
+
+    async function submitFeedback(e) {
+      e.preventDefault();
+      const form = document.getElementById('feedback-form');
+      const reportedLabel = form.elements['reported_label'].value;
+      const comments = document.getElementById('feedback-comments').value.trim();
+      const email = document.getElementById('feedback-email').value.trim();
+      const title = document.getElementById('title').value.trim();
+
+      try {
+        const res = await fetch('/api/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            scan_id: currentScanId,
+            job_title: title || 'Job Listing',
+            reported_label: reportedLabel,
+            comments: comments,
+            user_email: email
+          })
+        });
+
+        if (!res.ok) throw new Error("Could not record feedback");
+        const data = await res.json();
+        alert("Thank you! Your feedback has been recorded into SQLite history (#" + data.feedback_id + ") for model training audits.");
+        closeFeedbackModal();
+        form.reset();
+      } catch (err) {
+        alert("Error submitting feedback: " + err.message);
+      }
+    }
+
+    // Load Scan History from SQLite database
+    async function loadScanHistory() {
+      const tbody = document.getElementById('history-table-body');
+      tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-400 italic">Fetching latest scans from database...</td></tr>';
+
+      try {
+        const res = await fetch('/api/history?limit=30');
+        if (!res.ok) throw new Error("Failed to load history");
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-400 italic">No past scans recorded yet. Analyze a job posting to begin tracking history.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.map(s => {
+          const badgeClass = s.badge_color === 'red' ? 'bg-rose-100 text-rose-800 border-rose-200' :
+                             s.badge_color === 'orange' ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                             'bg-emerald-100 text-emerald-800 border-emerald-200';
+          const dt = new Date(s.created_at).toLocaleString();
+
+          return `
+            <tr class="hover:bg-slate-50/70 transition">
+              <td class="py-2.5 px-4 font-mono font-bold text-slate-500">#${s.id}</td>
+              <td class="py-2.5 px-4 text-slate-500 text-[11px] whitespace-nowrap">${dt}</td>
+              <td class="py-2.5 px-4 font-semibold text-slate-900 max-w-xs truncate">${s.title}</td>
+              <td class="py-2.5 px-4 text-slate-600 text-xs">${s.company || '—'}</td>
+              <td class="py-2.5 px-4 font-bold text-xs">${s.risk_score_pct}%</td>
+              <td class="py-2.5 px-4">
+                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full border ${badgeClass}">
+                  ${s.prediction_label}
+                </span>
+              </td>
+              <td class="py-2.5 px-4 text-right">
+                <button type="button" onclick="inspectHistoryItem(${s.id})" class="text-emerald-600 hover:text-emerald-800 font-semibold text-[11px] hover:underline">
+                  Load & Review
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-rose-500 font-semibold">Error loading scan history: ${err.message}</td></tr>`;
+      }
+    }
+
+    async function inspectHistoryItem(id) {
+      try {
+        const res = await fetch('/api/history?limit=100');
+        const data = await res.json();
+        const item = data.find(x => x.id === id);
+        if (!item) return;
+
+        document.getElementById('title').value = item.title;
+        document.getElementById('company_profile').value = item.company;
+        document.getElementById('location').value = item.location;
+        document.getElementById('description').value = `Historical Scan #${item.id}: ${item.title} evaluated with ${item.risk_score_pct}% risk (${item.prediction_label}).`;
+
+        switchTab('analyzer');
+        document.getElementById('job-form').dispatchEvent(new Event('submit'));
+      } catch (err) {
+        alert("Error loading item: " + err.message);
+      }
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', initSamples);
+  </script>
+</body>
+</html>

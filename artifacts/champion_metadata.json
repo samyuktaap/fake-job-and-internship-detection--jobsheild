@@ -1,0 +1,45 @@
+{
+  "champion_model": "Linear SVM (Calibrated)",
+  "selected_threshold": 0.33,
+  "test_metrics": {
+    "accuracy": 0.9853,
+    "precision": 0.86,
+    "recall": 0.8037,
+    "f1": 0.8309,
+    "true_negatives": 2257,
+    "false_positives": 14,
+    "false_negatives": 21,
+    "true_positives": 86,
+    "confusion_matrix": {
+      "tn": 2257,
+      "fp": 14,
+      "fn": 21,
+      "tp": 86
+    },
+    "pr_auc": 0.9011,
+    "roc_auc": 0.9912
+  },
+  "validation_metrics": {
+    "accuracy": 0.9844,
+    "precision": 0.8165,
+    "recall": 0.8396,
+    "f1": 0.8279,
+    "true_negatives": 2252,
+    "false_positives": 20,
+    "false_negatives": 17,
+    "true_positives": 89,
+    "confusion_matrix": {
+      "tn": 2252,
+      "fp": 20,
+      "fn": 17,
+      "tp": 89
+    },
+    "pr_auc": 0.8705,
+    "roc_auc": 0.991
+  },
+  "class_imbalance": {
+    "legitimate_rate": 0.955,
+    "fraud_rate": 0.045
+  },
+  "disclaimer": "JobShield is an AI-assisted screening decision-support aid, not a legal finding or definitive accusation. Model predictions reflect statistical associations learned from training data."
+}
