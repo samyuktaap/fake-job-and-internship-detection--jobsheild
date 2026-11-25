@@ -17,8 +17,8 @@ JobShield is built in strict adherence to the **JobShield Group Work Plan & Mode
 To ensure complete architectural clarity, JobShield's features are categorized into completed working implementations, local developer prototypes, and planned enhancements:
 
 ### ✅ Completed & Tested (Production-Ready Core)
-- **Zero-Leakage ML Pipeline:** 70/15/15 stratified train/val/test split with 2,031 duplicate templates removed to prevent train-test contamination. Transformers fitted strictly on training folds.
-- **Calibrated Linear SVM Champion:** Linear SVM with Platt scaling calibration (`CalibratedClassifierCV(LinearSVC, cv=3)`) achieving optimal fraud-class precision (**86.00%**) and recall (**80.37%**) at validation-tuned threshold **0.33**.
+- **Zero-Leakage Benchmark Partition:** Strictly deduplicated by job description body; 14,583 unique listings with 0% description overlap between train, val, and test splits (70/15/15 stratified split).
+- **Calibrated Linear SVM Champion:** Linear SVM with Platt scaling calibration (`CalibratedClassifierCV(LinearSVC, cv=3)`) achieving optimal fraud-class precision (**83.91%**) and recall (**78.49%**, F1: **0.8111**) at validation-tuned threshold **0.36**.
 - **Transparent Explainability:** Model weights and domain heuristics extracted via `JobShieldExplainer`, providing human-readable red flags, legitimacy markers, and top feature contributions.
 - **Persistent SQLite Database:** Fully operational SQLite database layer (`data/jobshield.db`) storing scan history (`scan_history` table) and candidate feedback (`user_feedback` table) via `backend/database.py`.
 - **FastAPI REST API:** 7 live endpoints (`/api/health`, `/api/predict`, `/api/predict/batch`, `/api/history`, `/api/feedback`, `/api/metrics`, `/api/samples`).
@@ -35,47 +35,47 @@ To ensure complete architectural clarity, JobShield's features are categorized i
 ### 📋 Planned Future Roadmap (Not Yet Implemented)
 - **Chrome Web Store Distribution:** Packaging, asset review, and public web store listing.
 - **Production Cloud Deployment:** Public HTTPS reverse-proxy hosting for the FastAPI backend.
-- **Semantic Sentence Embeddings:** Incorporating contextual transformer representations (e.g., `sentence-transformers/all-MiniLM-L6-v2`) in parallel with TF-IDF.
+- **Semantic Sentence Embeddings:** Contextual transformer representations (`all-MiniLM-L6-v2`) in parallel with TF-IDF.
 - **External Domain & WHOIS Verification:** Live domain age checking and recruiter email verification to catch enterprise impersonation blind spots.
 - **API Rate Limiting:** Throttling endpoint usage via `slowapi`.
 
 ---
 
-## 📊 Model Comparison on Held-Out Test Set (2,378 Postings)
+## 📊 Model Comparison on Held-Out Test Set (2,188 Postings, Zero Leakage)
 
-All 6 algorithms were benchmarked across 5-fold cross-validation on the development set and finally evaluated on the pristine, untouched held-out test split (2,378 postings; 107 fraudulent, 2,271 legitimate):
+All 6 algorithms were benchmarked across 5-fold cross-validation on the development set and evaluated on the untouched, zero-leakage held-out test split (2,188 postings; 93 fraudulent, 2,095 legitimate):
 
 | Model | Feature Representation | Decision Threshold | Precision (Fraud) | Recall (Fraud) | F1-Score | PR-AUC | ROC-AUC |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **DummyClassifier** | Majority Baseline | 0.05 | 0.00% | 0.00% | 0.0000 | 0.0450 | 0.5000 |
-| **Multinomial Naive Bayes** | TF-IDF Text | 0.46 | 79.59% | 72.90% | 0.7610 | 0.8389 | 0.9762 |
-| **Logistic Regression (Balanced)** | TF-IDF + Metadata + Risk Signals | 0.70 | 77.27% | 79.44% | 0.7834 | 0.8348 | 0.9861 |
-| **Linear SVM (Calibrated) ★** | TF-IDF + Metadata + Risk Signals | **0.33 (Tuned)** | **86.00%** | **80.37%** | **0.8309** | **0.9011** | **0.9912** |
-| **Random Forest (Balanced)** | TF-IDF + Metadata + Risk Signals | 0.60 | 67.96% | 65.42% | 0.6667 | 0.7582 | 0.9764 |
-| **XGBoost (scale_pos_weight)** | TF-IDF + Metadata + Risk Signals | 0.63 | 70.09% | 76.64% | 0.7321 | 0.8038 | 0.9786 |
+| **DummyClassifier** | Majority Baseline | 0.05 | 0.00% | 0.00% | 0.0000 | 0.0425 | 0.5000 |
+| **Multinomial Naive Bayes** | TF-IDF Text | 0.33 | 63.21% | 72.04% | 0.6734 | 0.7513 | 0.9636 |
+| **Logistic Regression (Balanced)** | TF-IDF + Metadata + Risk Signals | 0.70 | 75.79% | 77.42% | 0.7660 | 0.8357 | 0.9815 |
+| **Linear SVM (Calibrated) ★** | TF-IDF + Metadata + Risk Signals | **0.36 (Tuned)** | **83.91%** | **78.49%** | **0.8111** | **0.8648** | **0.9815** |
+| **Random Forest (Balanced)** | TF-IDF + Metadata + Risk Signals | 0.60 | 63.92% | 66.67% | 0.6526 | 0.7577 | 0.9763 |
+| **XGBoost (scale_pos_weight)** | TF-IDF + Metadata + Risk Signals | 0.64 | 67.33% | 73.12% | 0.7010 | 0.8221 | 0.9715 |
 
-### Held-Out Confusion Matrix (Linear SVM Champion, Threshold = 0.33)
+### Held-Out Confusion Matrix (Linear SVM Champion, Threshold = 0.36)
 
 ```
                        Predicted Legitimate    Predicted Fraudulent     Total
-Actual Legitimate (0)         2,257 (TN)                 14 (FP)        2,271
-Actual Fraudulent (1)            21 (FN)                 86 (TP)          107
-Total Predicted               2,278                     100            2,378
+Actual Legitimate (0)         2,081 (TN)                 14 (FP)        2,095
+Actual Fraudulent (1)            20 (FN)                 73 (TP)           93
+Total Predicted               2,101                      87            2,188
 ```
 
 ### Detailed Error and False Negative Breakdown
 
 To avoid ambiguity in error reporting, false negatives are reported both at the fraud-class level and across the total dataset:
 
-- **Fraud-Class False Negative Rate (Miss Rate):** **19.63%**  
-  $$\text{FNR}_{\text{fraud}} = \frac{\text{FN}}{\text{TP} + \text{FN}} = \frac{21}{86 + 21} = \frac{21}{107} = 19.63\%$$
-  The model successfully caught **80.37%** of fraudulent postings ($\text{Recall} = 86/107$) and missed 21 scam postings (~1 in 5). Analysis reveals that missed scams were sophisticated enterprise impersonations that plagiarized legitimate Fortune 500 job descriptions.
-- **Dataset-Wide False Negative Rate:** **0.88%**  
-  $$\text{FNR}_{\text{dataset}} = \frac{\text{FN}}{\text{Total Samples}} = \frac{21}{2,378} = 0.88\%$$
-  Undetected scams represent only 0.88% of all job listings evaluated in the held-out test set.
-- **False Positive Rate (Specificity):** **0.62%**  
-  $$\text{FPR} = \frac{\text{FP}}{\text{TN} + \text{FP}} = \frac{14}{2,257 + 14} = \frac{14}{2,271} = 0.62\%$$
-  Out of 2,271 authentic job listings, only 14 were falsely flagged as suspicious ($\text{Specificity} = 99.38\%$), protecting legitimate small employers.
+- **Fraud-Class False Negative Rate (Miss Rate):** **21.51%**  
+  $$\text{FNR}_{\text{fraud}} = \frac{\text{FN}}{\text{TP} + \text{FN}} = \frac{20}{73 + 20} = \frac{20}{93} = 21.51\%$$
+  The model successfully caught **78.49%** of fraudulent postings ($\text{Recall} = 73/93$) and missed 20 scam postings (~1 in 5). Qualitative analysis shows that all 20 missed scams were enterprise impersonations that plagiarized legitimate Fortune 500 job descriptions.
+- **Dataset-Wide False Negative Rate:** **0.91%**  
+  $$\text{FNR}_{\text{dataset}} = \frac{\text{FN}}{\text{Total Samples}} = \frac{20}{2,188} = 0.91\%$$
+  Undetected scams represent only 0.91% of all job listings evaluated in the held-out test set.
+- **False Positive Rate (Specificity):** **0.67%**  
+  $$\text{FPR} = \frac{\text{FP}}{\text{TN} + \text{FP}} = \frac{14}{2,081 + 14} = \frac{14}{2,095} = 0.67\%$$
+  Out of 2,095 authentic job listings, only 14 were falsely flagged as suspicious ($\text{Specificity} = 99.33\%$), protecting legitimate small employers.
 
 ---
 

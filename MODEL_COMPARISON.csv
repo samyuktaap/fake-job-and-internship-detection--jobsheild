@@ -1,7 +1,7 @@
 Model,Features,CV_F1_Mean,CV_F1_Std,CV_PR_AUC,Val_Optimal_Threshold,Test_Threshold,Test_Accuracy,Test_Precision,Test_Recall,Test_F1,Test_PR_AUC,Test_ROC_AUC,TN,FP,FN,TP
-DummyClassifier (Majority),TF-IDF text,0.0000,0.0000,0.0447,0.05,0.05,0.9550,0.0000,0.0000,0.0000,0.0450,0.5000,2271,0,107,0
-Multinomial Naive Bayes,TF-IDF text,0.6994,0.0477,0.7765,0.46,0.46,0.9794,0.7959,0.7290,0.7610,0.8389,0.9762,2251,20,29,78
-Logistic Regression (Balanced),TF-IDF + Categorical + Risk Signals,0.6487,0.0139,0.8173,0.70,0.70,0.9802,0.7727,0.7944,0.7834,0.8348,0.9861,2246,25,22,85
-Linear SVM (Calibrated),TF-IDF + Categorical + Risk Signals,0.8145,0.0270,0.8829,0.33,0.33,0.9853,0.8600,0.8037,0.8309,0.9011,0.9912,2257,14,21,86
-Random Forest (Balanced),TF-IDF + Categorical + Risk Signals,0.6076,0.0076,0.7690,0.60,0.60,0.9706,0.6796,0.6542,0.6667,0.7582,0.9764,2238,33,37,70
-XGBoost (scale_pos_weight),TF-IDF + Categorical + Risk Signals,0.6940,0.0180,0.8291,0.63,0.63,0.9748,0.7009,0.7664,0.7321,0.8038,0.9786,2236,35,25,82
+DummyClassifier (Majority),TF-IDF text,0.0000,0.0000,0.0421,0.0500,0.0500,0.9575,0.0000,0.0000,0.0000,0.0425,0.5000,2095,0,93,0
+Multinomial Naive Bayes,TF-IDF text,0.6475,0.0623,0.7277,0.3300,0.3300,0.9703,0.6321,0.7204,0.6734,0.7513,0.9636,2056,39,26,67
+Logistic Regression (Balanced),TF-IDF + Categorical + Risk signals,0.6401,0.0144,0.7951,0.7000,0.7000,0.9799,0.7579,0.7742,0.7660,0.8357,0.9815,2072,23,21,72
+Linear SVM (Calibrated),TF-IDF + Categorical + Risk signals,0.7752,0.0448,0.8566,0.3600,0.3600,0.9845,0.8391,0.7849,0.8111,0.8648,0.9815,2081,14,20,73
+Random Forest (Balanced),TF-IDF + Categorical + Risk signals,0.5558,0.0229,0.6728,0.6000,0.6000,0.9698,0.6392,0.6667,0.6526,0.7577,0.9763,2060,35,31,62
+XGBoost (scale_pos_weight),TF-IDF + Categorical + Risk signals,0.6220,0.0255,0.7646,0.6400,0.6400,0.9735,0.6733,0.7312,0.7010,0.8221,0.9715,2062,33,25,68
