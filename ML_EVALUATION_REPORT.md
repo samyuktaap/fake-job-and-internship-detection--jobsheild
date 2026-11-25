@@ -44,8 +44,10 @@ Actual Legitimate (0)              2,257 (TN)                 14 (FP)           
 Actual Fraudulent (1)                 21 (FN)                 86 (TP)              107
 Total Predicted                    2,278                      100                2,378
 ```
-- **False Positive Rate:** Only **0.62%** (14 out of 2,271 legitimate listings falsely flagged).
+- **False Positive Rate:** Only **0.62%** (14 out of 2,271 legitimate listings falsely flagged; Specificity = 99.38%).
 - **Fraud Recall:** Catches **80.37%** (86 of 107 fraudulent listings caught).
+- **Fraud-Class False Negative Rate (Miss Rate):** **19.63%** ($\text{FNR}_{\text{fraud}} = \frac{21}{107} = 19.63\%$; 21 scam postings missed due to authentic enterprise copy-pasting).
+- **Dataset-Wide False Negative Rate:** **0.88%** ($\text{FNR}_{\text{dataset}} = \frac{21}{2,378} = 0.88\%$; missed fraud postings as a proportion of all evaluated postings).
 
 ### 3.2 Logistic Regression (Balanced, Threshold = 0.70)
 ```
@@ -54,8 +56,10 @@ Actual Legitimate (0)              2,246 (TN)                 25 (FP)           
 Actual Fraudulent (1)                 22 (FN)                 85 (TP)              107
 Total Predicted                    2,268                      110                2,378
 ```
-- **False Positive Rate:** Only **1.10%** (25 out of 2,271 legitimate listings falsely flagged).
+- **False Positive Rate:** Only **1.10%** (25 out of 2,271 legitimate listings falsely flagged; Specificity = 98.90%).
 - **Fraud Recall:** Catches **79.44%** (85 of 107 fraudulent listings caught).
+- **Fraud-Class False Negative Rate (Miss Rate):** **20.56%** ($\frac{22}{107} = 20.56\%$).
+- **Dataset-Wide False Negative Rate:** **0.93%** ($\frac{22}{2,378} = 0.93\%$).
 
 ### 3.3 XGBoost (scale_pos_weight, Threshold = 0.63)
 ```
@@ -64,6 +68,10 @@ Actual Legitimate (0)              2,236 (TN)                 35 (FP)           
 Actual Fraudulent (1)                 25 (FN)                 82 (TP)              107
 Total Predicted                    2,261                      117                2,378
 ```
+- **False Positive Rate:** Only **1.54%** (35 out of 2,271 legitimate listings falsely flagged).
+- **Fraud Recall:** Catches **76.64%** (82 of 107 fraudulent listings caught).
+- **Fraud-Class False Negative Rate (Miss Rate):** **23.36%** ($\frac{25}{107} = 23.36\%$).
+- **Dataset-Wide False Negative Rate:** **1.05%** ($\frac{25}{2,378} = 1.05\%$).
 
 ---
 
